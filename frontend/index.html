@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <title>SVM UX Visual</title>
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<h2>Support Vector Machine con UX</h2>
+<input id="edad" placeholder="Edad">
+<input id="ingresos" placeholder="Ingresos">
+<button onclick="analizar()">Analizar</button>
+<canvas id="grafica"></canvas>
+
+<script>
+function analizar(){
+ fetch('/api/clasificar/',{
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({
+   edad:document.getElementById('edad').value,
+   ingresos:document.getElementById('ingresos').value
+  })
+ })
+ .then(r=>r.json())
+ .then(d=>{
+  const ctx=document.getElementById('grafica');
+  const datos=d.datos.map(x=>({x:x.edad,y:x.ingresos}));
+  new Chart(ctx,{
+   type:'scatter',
+   data:{datasets:[
+    {label:'Datos entrenamiento',data:datos},
+    {label:'Usuario',data:[{x:d.usuario.edad,y:d.usuario.ingresos}]}
+   ]}
+  });
+ });
+}
+</script>
+</body>
+</html>
